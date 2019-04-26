@@ -14,10 +14,10 @@ int main(int argc, char* argv[]) {
 
   printf("Hello, world!\n");
 
-  LOGT("Test %s", "TRACE");
-  LOGD("Test %s", "DEBUG");
-  LOGI("Test %s", "INFO");
-  LOGW("Test %s", "WARN");
-  LOGE("Test %s", "ERROR");
-  LOGF("Test %s", "FATAL");
+  LOGT("Test %s", _str("TRACE"));
+  LOGD("Test %s", _str("DEBUG"));
+  LOGI("Test %s", _str("INFO"));
+  LOGW("Test %s", _str("WARN"));
+  LOGE("Test %s", _str("ERROR"));
+  LOGF("Test %s", _str("FATAL"));
 }
