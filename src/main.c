@@ -5,8 +5,10 @@
 
 #include <stdio.h>
 
+#include "client.h"
 #include "global.h"
 #include "log.h"
+#include "service.h"
 
 int main(int argc, char* argv[]) {
   g_mut->argc = argc;
@@ -20,4 +22,16 @@ int main(int argc, char* argv[]) {
   LOGW("Test %s", _str("WARN"));
   LOGE("Test %s", _str("ERROR"));
   LOGF("Test %s", _str("FATAL"));
+
+  service_load(CLIENT_SERVICE);
+
+  service_start(CLIENT_SERVICE);
+  service_stop(CLIENT_SERVICE);
+
+  service_start(CLIENT_SERVICE);
+  service_stop(CLIENT_SERVICE);
+
+  service_unload(CLIENT_SERVICE);
+
+  service_load(CLIENT_SERVICE); // should fail
 }
