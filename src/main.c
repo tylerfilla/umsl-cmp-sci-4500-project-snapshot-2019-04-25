@@ -3,35 +3,25 @@
  * Copyright 2019 The Cozmonaut Contributors
  */
 
-#include <stdio.h>
-
 #include "client.h"
 #include "global.h"
 #include "log.h"
+#include "monitor.h"
 #include "service.h"
 
 int main(int argc, char* argv[]) {
   g_mut->argc = argc;
   g_mut->argv = (const char**) argv;
 
-  printf("Hello, world!\n");
-
-  LOGT("Test %s", _str("TRACE"));
-  LOGD("Test %s", _str("DEBUG"));
-  LOGI("Test %s", _str("INFO"));
-  LOGW("Test %s", _str("WARN"));
-  LOGE("Test %s", _str("ERROR"));
-  LOGF("Test %s", _str("FATAL"));
-
   service_load(CLIENT_SERVICE);
+  service_load(MONITOR_SERVICE);
 
   service_start(CLIENT_SERVICE);
+  service_start(MONITOR_SERVICE);
+
+  service_stop(MONITOR_SERVICE);
   service_stop(CLIENT_SERVICE);
 
-  service_start(CLIENT_SERVICE);
-  service_stop(CLIENT_SERVICE);
-
+  service_unload(MONITOR_SERVICE);
   service_unload(CLIENT_SERVICE);
-
-  service_load(CLIENT_SERVICE); // should fail
 }

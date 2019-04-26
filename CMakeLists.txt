@@ -14,6 +14,7 @@ set(cozmo_SRC_FILES
         src/client.c
         src/global.c
         src/main.c
+        src/monitor.c
         src/service.c
         )
 
