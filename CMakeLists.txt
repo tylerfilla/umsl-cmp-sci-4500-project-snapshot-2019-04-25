@@ -6,6 +6,9 @@
 cmake_minimum_required(VERSION 3.4)
 project(cozmonaut)
 
+add_subdirectory(third_party/glfw)
+add_subdirectory(third_party/nanovg-cmake)
+
 set(cozmo_SRC_FILES
         src/client.c
         src/global.c
