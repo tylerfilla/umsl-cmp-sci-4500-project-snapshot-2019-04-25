@@ -19,6 +19,14 @@ int main(int argc, char* argv[]) {
   service_start(CLIENT_SERVICE);
   service_start(MONITOR_SERVICE);
 
+  // Connect to the monitor service
+  struct service_connection* conn = service_connect(MONITOR_SERVICE);
+  int fdr = service_local_read(conn);
+  int fdw = service_local_write(conn);
+
+  // Disconnect from the monitor service
+  service_disconnect(conn);
+
   service_stop(MONITOR_SERVICE);
   service_stop(CLIENT_SERVICE);
 

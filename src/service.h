@@ -6,8 +6,10 @@
 #ifndef SERVICE_H
 #define SERVICE_H
 
+#include <stddef.h>
+
+struct service_connection;
 struct service_iface;
-struct service_state;
 
 /** An app service definition. */
 struct service {
@@ -53,7 +55,31 @@ struct service_iface {
    * @param svc The service definition
    */
   void (* on_stop)(struct service* svc);
+
+  /**
+   * Called when a client connects to the service.
+   *
+   * @param svc The service definition
+   * @param conn The service connection
+   * @return An arbitrary userdata pointer
+   */
+  void* (* on_connect)(struct service* svc, struct service_connection* conn);
+
+  /**
+   * Called when a client disconnects from the service.
+   *
+   * @param svc The service definition
+   * @param conn The service connection
+   * @param userdata The userdata pointer provided during connection
+   */
+  void (* on_disconnect)(struct service* svc, struct service_connection* conn, void* userdata);
 };
+
+/** Info for a connection to a service. */
+struct service_connection;
+
+/** State for a service. */
+struct service_state;
 
 /** The status of a service. */
 enum service_status {
@@ -97,5 +123,83 @@ int service_start(struct service* svc);
  * @return Zero on success, otherwise nonzero
  */
 int service_stop(struct service* svc);
+
+/**
+ * Connect to a service for communication.
+ *
+ * @param svc The service definition
+ * @return The service connection
+ */
+struct service_connection* service_connect(struct service* svc);
+
+/**
+ * Disconnect a service connection.
+ *
+ * @param conn The service connection
+ * @return Zero on success, otherwise nonzero
+ */
+int service_disconnect(struct service_connection* conn);
+
+/**
+ * Open a service connection for local read.
+ *
+ * This should only be called on the local (non-service) end of a connection.
+ *
+ * The result of calling this function is a real Unix file descriptor. All valid
+ * Unix file I/O applies to this read-only file descriptor.
+ *
+ * @param conn The service connection
+ * @return A read-only Unix file descriptor
+ */
+int service_local_read(struct service_connection* conn);
+
+/**
+ * Open a service connection for local write.
+ *
+ * This should only be called on the local (non-service) end of a connection.
+ *
+ * The result of calling this function is a real Unix file descriptor. All valid
+ * Unix file I/O applies to this write-only file descriptor.
+ *
+ * @param conn The service connection
+ * @return A write-only Unix file descriptor
+ */
+int service_local_write(struct service_connection* conn);
+
+/**
+ * Open a service connection for remote read.
+ *
+ * This should only be called on the remote (service) end of a connection.
+ *
+ * The result of calling this function is a real Unix file descriptor. All valid
+ * Unix file I/O applies to this read-only file descriptor.
+ *
+ * @param conn The service connection
+ * @return A read-only Unix file descriptor
+ */
+int service_remote_read(struct service_connection* conn);
+
+/**
+ * Open a service connection for remote write.
+ *
+ * This should only be called on the remote (service) end of a connection.
+ *
+ * The result of calling this function is a real Unix file descriptor. All valid
+ * Unix file I/O applies to this write-only file descriptor.
+ *
+ * @param conn The service connection
+ * @return A write-only Unix file descriptor
+ */
+int service_remote_write(struct service_connection* conn);
+
+/**
+ * Access userdata in a service connection.
+ *
+ * This should only be called on the remote (service) end of a connection.
+ *
+ * @param conn The service connection
+ * @return The userdata on the connection
+ */
+void* service_remote_userdata(struct service_connection* conn);
 
 #endif // #ifndef SERVICE_H
